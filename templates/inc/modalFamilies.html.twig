@@ -1,0 +1,27 @@
+<div class="modal fade" id="modalFamilies" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">Mes familles</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                {% if app.user %}
+                    {% if app.user.families|length > 1 %}
+                        <p>Choisissez la famille à laquelle vous souhaitez vous connecter.</p>
+                        {% for family in app.user.families %}
+                            <a class="" href="{{ path('family_connect', {'id': family.id}) }}"><i class="fas fa-plug"></i>&nbsp;{{ family.name }}</a><br>
+                        {% endfor %}
+                    {% elseif app.user.families|length == 1 %}
+                        <p>Vous n'appartenez qu'à une seule famille : <b>{{ app.session.get('family').name }}</b></p>
+                    {% endif %}
+                {% endif %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>

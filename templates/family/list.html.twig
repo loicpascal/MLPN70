@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} Mes familles{% endblock %}
+{% block h1 %}
+    Mes familles
+    {% if families %}
+    <span class="badge badge-primary">{{ families|length }}</span>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+
+
+<div>
+    {% if not families %}
+        {{ 'You are not attached to any family.'|trans }}<br><br>
+        <a href="{{ path('family_new') }}" class="btn btn-primary"><i class="fas fa-plus-circle"></i>&nbsp;{{ 'Create family'|trans }}</a>
+        <a href="{{ path('family_join') }}" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i>&nbsp;{{ 'Join family'|trans }}</a>
+    {% else %}
+
+    <div class="listeCadeau">
+        {% for family in families %}
+        <div class="card">
+            <div class="card-body">
+                <p class="text-muted float-right">
+                    <small>
+                        <span><i class="fas fa-users"></i>&nbsp;{{ 'num_of_members'|trans({'members': family.members|length}) }}</span>&nbsp;
+                        <span title="Créée le {{ family.date|date("d/m/Y") }}"><i class="fas fa-calendar-alt"></i>&nbsp;{{ family.date|date("d/m/Y") }}</span>
+                    </small>
+                </p>
+                <h5 class="card-title">{{ family.name }}</h5>
+
+                <p class="card-text">
+                    <span>
+                        Code : {{ family.code }}<br>
+                        <span class="badge badge-light copy-to-clipboard-button" data-link="{{ app.request.scheme ~'://' ~ app.request.httpHost ~ path('family_join_code', {'code' : family.code}) }}">Copier le lien de partage</span><br>
+                    </span>
+                    <span>
+                        <p>Membres</p>
+                        <ul>
+                            {% for member in family.members %}
+                            <li>{{ member.firstname }}</li>
+                            {% endfor %}
+                        </ul>
+                    </span>
+                    <!-- Modal -->
+                    {{  include('inc/modal.html.twig', {'id_modal' : 'leaveFamily' ~ family.id,'title' : 'Quitter cette famille', 'route' : path('family_leave', {'id': family.id})}) }}
+                    <button class="btn btn-info btn-sm" data-toggle="modal" data-target="#leaveFamily{{ family.id }}" title="Quitter"><i class="fas fa-sign-out-alt"></i>&nbsp;Quitter</button>
+                    {% if app.session.get('family').id != family.id %}
+                    <a href="{{ path('family_connect', {'id': family.id}) }}" title="Se connecter"><button type="button" class="btn btn-info btn-sm"><i class="fas fa-pencil-alt"></i>&nbsp;Se connecter</button></a>
+                    {% endif %}
+
+                    {% if family.member.id == app.user.id %}
+                    <a href="{{ path('family_update', {'id': family.id}) }}" title="Modifier"><button type="button" class="btn btn-info btn-sm"><i class="fas fa-pencil-alt"></i>&nbsp;Modifier</button></a>
+                        {% if family.members|length <= 1 %}
+                        <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteFamily{{ family.id }}" title="Supprimer"><i class="fas fa-trash-alt"></i></button>
+                        <!-- Modal -->
+                        {{  include('inc/modal.html.twig', {'id_modal' : 'deleteFamily' ~ family.id,'title' : 'Supprimer cette famille', 'route' : path('family_delete', {'id': family.id})}) }}
+                        {% endif %}
+                    {% endif %}
+
+                </p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <a href="{{ path('family_new') }}" class="btn btn-primary"><i class="fas fa-plus-circle"></i>&nbsp;{{ 'Create family'|trans }}</a>
+    <a href="{{ path('family_join') }}" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i>&nbsp;{{ 'Join family'|trans }}</a>
+
+    {% endif %}
+</div>
+{% endblock %}

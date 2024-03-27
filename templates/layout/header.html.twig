@@ -1,0 +1,98 @@
+{% set cur_path = app.request.get('_route') %}
+{% set actif = null %}
+
+{% if cur_path in ['idea_list', 'idea_new', 'idea_update'] %}
+    {% if app.request.attributes.get('member_id') or (idea is defined and idea.member.id != app.user.id) %}
+        {% set actif = 'other_members' %}
+    {% else %}
+        {% set actif = 'my_ideas' %}
+    {% endif %}
+{% elseif cur_path in ['member_list', 'member_show', 'idea_show'] %}
+    {% set actif = 'other_members' %}
+{% elseif cur_path in ['family_list', 'family_new', 'family_join'] %}
+    {% set actif = 'family_list' %}
+{% elseif cur_path in ['member_shopping_list'] %}
+    {% set actif = 'my_shopping_list' %}
+{% elseif cur_path in ['my_account'] %}
+    {% set actif = 'my_account' %}
+{% endif %}
+
+<header>
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <div class="container">
+            <a class="" href="{{ path('home') }}">
+                <img id="logo" src="{{ asset('images/logo.png') }}" alt="">
+                <span class="navbar-brand innerContainer">Ma lettre au Père Noël</span>
+            </a>
+            {% if app.user %}
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            {% endif %}
+
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+
+                {# Si l'utilisateur est connecté #}
+                {% if app.user %}
+
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item dropdown {% if actif == 'my_ideas' %}active{% endif %}">
+                            <a class="nav-link" href="{{ path('idea_list') }}"><i class="fas fa-gift"></i>&nbsp;Mes idées</a>
+                        </li>
+                        <li class="nav-item dropdown {% if actif == 'other_members' %}active{% endif %}">
+                            <a class="nav-link" href="{{ path('member_list') }}"><i class="fas fa-user-friends"></i>&nbsp;Membres</a>
+                        </li>
+                    </ul>
+
+                    {% if app.user.families|length > 1 %}
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarFamili" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                {% if app.session.get('family') %}{{ app.session.get('family').name }}{% else %}Familles{% endif %}
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarFamili">
+                                {% for family in app.user.families %}
+                                <a class="dropdown-item" href="{{ path('family_connect', {'id': family.id}) }}"><i class="fas fa-plug"></i>&nbsp;{{ family.name }}</a>
+                                {% endfor %}
+                            </div>
+                        </li>
+                    </ul>
+                    {% elseif app.user.families|length == 1 %}
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" id="navbarFamili" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ app.session.get('family').name }}</a>
+                        </li>
+                    </ul>
+                    {% endif %}
+
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarFamilies" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Familles</a>
+                            <div class="dropdown-menu" aria-labelledby="navbarFamilies">
+                                <a class="dropdown-item" href="{{ path('family_list') }}"><i class="fas fa-heart"></i>&nbsp;Mes familles</a>
+
+                                {% if app.user.families|length > 1 %}
+                                <a href="#" class="dropdown-item" data-toggle="modal" data-target="#modalFamilies"><i class="fas fa-exchange-alt"></i>&nbsp;Changer de famille</a>
+                                {% endif %}
+                            </div>
+                        </li>
+                    </ul>
+
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarMonCompte" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ app.user.firstname }}</a>
+                            <div class="dropdown-menu" aria-labelledby="navbarMonCompte">
+                                <a class="dropdown-item {% if actif == 'my_account' %}active{% endif %}" href="{{ path('my_account') }}"><i class="fas fa-user"></i>&nbsp;Mon compte</a>
+                                <a class="dropdown-item" href="{{ path('member_shopping_list') }}"><i class="fas fa-shopping-cart"></i>&nbsp;Mes achats</a>
+                                <a class="dropdown-item" href="{{ path('idea_archived_list') }}"><i class="fas fa-archive"></i>&nbsp;Idées archivées</a>
+                                <a class="dropdown-item" href="{{ path('app_logout') }}"><i class="fas fa-sign-out-alt"></i>&nbsp;Déconnexion</a>
+                            </div>
+                        </li>
+                    </ul>
+
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+</header>

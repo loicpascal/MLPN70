@@ -1,0 +1,17 @@
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <span class="text-left">&copy; {{ "now"|date("Y") }} - Une idée originale de <a target="_blank" href="//www.melo-studio.fr">Mélo studio</a> <img id="logoFooter" src="{{ asset('images/logo.png') }}" alt=""></span>
+            </div>
+            <div class="col">
+                <span class="text-right">
+                <span><a href="{{ path('editorial_mentions') }}">Conditions générales d’utilisation</a></span>
+                {% if app.user %}
+                <span> | <a href="{{ path('my_account') }}">Mon compte</a></span>
+                {% endif %}
+                </span>
+            </div>
+        </div>
+    </div>
+</footer>

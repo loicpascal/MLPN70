@@ -1,0 +1,11 @@
+'You are not attached to any family.': 'Vous n''êtes rattaché·e à aucune famille.'
+'Create family': 'Créer une famille'
+'Join family': 'Rejoindre une famille'
+num_of_members: >-
+    {members, plural,
+        one      {1 membre}
+        other    {# membres}
+    }
+'You have no idea for a gift.': 'Vous n''avez aucune idée de cadeau.'
+'You have no idea archived.': 'Vous n''avez aucune idée archivée.'
+'You have no idea in your shopping list.': 'Vous n''avez aucune idée dans votre liste d''achats.'

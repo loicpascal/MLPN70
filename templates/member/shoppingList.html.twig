@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} Mes achats{% endblock %}
+{% block h1 %}Mes achats{% endblock %}
+
+{% block body %}
+
+    <div class="listeCadeau">
+        {% if not ideas %}
+            <span><i class="fas fa-info-circle"></i>&nbsp;{{ 'You have no idea in your shopping list.'|trans }}
+        {% else %}
+            {% for idea in ideas %}
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <img class="cadeau" src="{{ asset('images/cadeau.png') }}" alt=""><a href="{{ path('idea_show', {'id' : idea.id}) }}">{{ idea.member.firstname }} - {{ idea.title }}</a>
+                            <h6 class="card-subtitle mb-2 text-muted">{% if idea.memberAdding %}Ajouté par {{ idea.memberAdding.firstname }}{% endif %}</h6>
+                        </h5>
+                        <p class="card-text">{{ idea.description|nl2br }}</p>
+                        <p><a target="_blank" href="{{ idea.link }}" title="{{ idea.link }}" class="card-link external">{{ idea.link[:30] }} {% if idea.link|length > 30 %} [...]{% endif %}</a></p>
+
+                        <p class="card-text">
+                            {% if idea.state == 0 %}
+                                <a type="button" class="btn btn-primary btn-sm" href="{{ path('idea_state_update_to_take', {'id': idea.id, 'member_id': idea.member.id}) }}">Je prends</a>
+                            {% elseif idea.state == 1 %} {# J'ai pris #}
+                                {% if idea.memberTaking.id == app.user.id %}
+                                    <a type="button" class="btn btn-primary btn-sm" href="{{ path('idea_state_update_taken', {'id': idea.id, 'member_id': idea.member.id}) }}">J'ai pris</a>
+                                    <a type="button" class="btn btn-primary btn-sm" href="{{ path('idea_state_cancel_to_take', {'id': idea.id, 'member_id': idea.member.id}) }}">Finalement non</a>
+                                {% else %}
+                                    <button title="En cours par une autre membre" type="button" class="btn btn-primary btn-sm" disabled><i class="fas fa-lock"></i></button>
+                                {% endif %}
+                            {% elseif idea.state == 2 %}
+                                <div class="alert alert-success" role="alert">Pris {% if idea.memberTaking.id != app.user.id %} par quelqu'un d'autre{% else %} par vous{% endif %} !
+                                    {% if idea.memberTaking.id == app.user.id %}
+                                        <a href="{{ path('idea_state_cancel_to_take', {'id': idea.id, 'member_id': idea.member.id}) }}" class="badge badge-danger">Annuler</a>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+
+                            {% if (idea.memberAdding.id is defined) and (idea.memberAdding.id == app.user.id) %}
+                                <a type="button" class="btn btn-info btn-sm" href="{{ path('idea_update', {'id': idea.id}) }}" title="Modifier"><i class="fas fa-pencil-alt"></i>&nbsp;Modifier</a>
+                                <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteIdea{{ idea.id }}" title="Supprimer"><i class="fas fa-trash-alt"></i></button>
+                                <!-- Modal -->
+                                {{  include('inc/modal.html.twig', {'id_modal' : 'deleteIdea' ~ idea.id,'title' : 'Supprimer cette idée', 'route' : path('idea_delete', {'id': idea.id})}) }}
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+{% endblock %}
+

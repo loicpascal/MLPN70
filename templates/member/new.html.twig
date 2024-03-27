@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} Inscription{% endblock %}
+{% block h1 %}Inscription{% endblock %}
+
+{% block body %}
+
+<div>
+    {{ form_start(form) }}
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            {{ form_label(form.firstname) }}
+            {{ form_errors(form.firstname) }}
+            {{ form_widget(form.firstname, {'attr' : {'class' : 'form-control'}}) }}
+        </div>
+
+        <div class="form-group col-md-6">
+            {{ form_label(form.lastname) }}
+            {{ form_errors(form.lastname) }}
+            {{ form_widget(form.lastname, {'attr' : {'class' : 'form-control'}}) }}
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            {{ form_label(form.email) }}
+            {{ form_errors(form.email) }}
+            {{ form_widget(form.email, {'attr' : {'class' : 'form-control'}}) }}
+        </div>
+        <div class="form-group col-md-6">
+            {{ form_label(form.birthdate) }}
+            {{ form_errors(form.birthdate) }}
+            {{ form_widget(form.birthdate, {'attr' : {'class' : 'form-control'}}) }}
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            {{ form_label(form.password.first) }}
+            {{ form_errors(form.password.first) }}
+            {{ form_widget(form.password.first, {'attr' : {'class' : 'form-control'}}) }}
+            <small class="form-text text-muted">{{ form_help(form.password.first) }}</small>
+        </div>
+
+        <div class="form-group col-md-6">
+            {{ form_label(form.password.second) }}
+            {{ form_errors(form.password.second) }}
+            {{ form_widget(form.password.second, {'attr' : {'class' : 'form-control'}}) }}
+            <small class="form-text text-muted">{{ form_help(form.password.second) }}</small>
+        </div>
+    </div>
+
+    <div>
+        {{ form_widget(form.save, {'attr' : {'class' : 'btn btn-primary'}}) }}
+        <a class="backlink" href="#" onclick="window.history.back();">Retour</a>
+    </div>
+    {{ form_end(form) }}
+
+    <br>
+    <p class="text-justify font-italic">
+        <small>
+        Les informations recueillies sur ce formulaire sont enregistrées dans un fichier informatisé par <b>Melo Studio</b> pour vous permettre d'utiliser l'application Ma Lettre au Père Noël. La base légale du traitement est votre consentement.
+        Les données collectées seront communiquées aux seuls destinataires suivants : <b>Melo Studio</b>.
+        Les données sont conservées pendant <b>3 ans à compter de votre dernière connexion</b>.
+        Vous pouvez accéder aux données vous concernant, les rectifier, demander leur effacement ou exercer votre droit à la limitation du traitement de vos données.
+        Consultez le site <a class="external" href="https://www.cnil.fr/">cnil.fr</a> pour plus d’informations sur vos droits.
+        Pour exercer ces droits ou pour toute question sur le traitement de vos données dans ce dispositif, vous pouvez contacter Melo Studio via le formulaire de contact ou à l'adresse suivante :
+        <a href="mailto:bonjour@melo-studio.fr">bonjour@melo-studio.fr</a>
+        Si vous estimez, après nous avoir contactés, que vos droits « Informatique et Libertés » ne sont pas respectés, vous pouvez adresser une réclamation auprès de la CNIL.<br>
+        </small>
+    </p>
+</div>
+{% endblock %}

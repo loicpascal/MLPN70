@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} Membres{% endblock %}
+{% block h1 %}Membres{% endblock %}
+
+{% block body %}
+
+    <div>
+        <table class="table table-hover">
+            <tbody>
+            {% for member in members %}
+                <tr>
+                    <td>
+                        <a href="{% if member.id == app.user.id %}{{ path('idea_list') }}{% else %}{{ path('member_show', {'id': member.id}) }}{% endif %}">
+                            {{ member.firstname }}{% if member.id == app.user.id %} (moi){% endif %}
+                        </a>
+                    </td>
+                    <td class="text-right">
+                        {% if member.id != app.user.id %}
+                        <a href="{{ path('idea_new', {'member_id': member.id}) }}" class="btn btn-primary btn-sm" title="Ajouter une idée"><i class="fas fa-plus"></i>&nbsp;Ajouter une idée</a>
+                        <a href="{{ path('member_show', {'id': member.id}) }}" class="btn btn-primary btn-sm" title="Voir ses idées"><i class="fas fa-list-ul"></i>&nbsp;Voir les idées&nbsp;&nbsp;<span class="badge badge-light">{{ member.notArchivedIdeas|length }}</span></a>
+                        {% else %}
+                            &nbsp;
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <br>
+    <div class="card card-help">
+        <div class="card-header"><i class="fas fa-info-circle"></i>&nbsp;Aide</div>
+        <div class="card-body">
+            <p>Un membre ne peut pas voir les idées de cadeaux que vous ajoutez à sa liste.</p>
+            <p>Le chiffre sur fond blanc dans <button type="button" class="btn btn-primary btn-sm"><i class="fas fa-list-ul"></i>&nbsp;Voir les idées&nbsp;&nbsp;<span class="badge badge-light">6</span></button> indique le nombre d'idées du membre.</p>
+        </div>
+    </div>
+{% endblock %}

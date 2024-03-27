@@ -1,0 +1,91 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} Mes idées{% if archived is defined %} archivées{% endif %}{% endblock %}
+{% block h1 %}
+    Mes idées{% if archived is defined %} archivées{% endif %}
+    {% if ideas %}
+    <span class="badge badge-primary">{{ ideas|length }}</span>
+    {% endif %}
+
+    {% if archived is not defined and ideas|length > 0 %}
+        <p class="float-right"><a href="{{ path('idea_new') }}" class="btn btn-primary"><i class="fas fa-plus-circle"></i>&nbsp;Ajouter une idée</a></p>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+
+    <div>
+        {% if not ideas %}
+            {% if archived is defined %}
+            <span><i class="fas fa-info-circle"></i>&nbsp;{% trans %}You have no idea archived.{% endtrans %}</span>
+            {% else %}
+            <span><i class="fas fa-info-circle"></i>&nbsp;{% trans %}You have no idea for a gift.{% endtrans %}</span><br><br>
+            {% endif %}
+            {% if ideas|length is same as(0) %}
+                <p><a href="{{ path('idea_new') }}" class="btn btn-primary"><i class="fas fa-plus-circle"></i>&nbsp;Ajouter ma première idée</a></p>
+            {% endif %}
+        {% else %}
+
+        <div class="listeCadeau">
+            {% for idea in ideas %}
+            <div class="card">
+                <div class="card-body">
+                    <p class="text-muted float-right">
+                        <small>
+                            <span title="Ajoutée le {{ idea.date|date("d/m/Y") }}"><i class="fas fa-calendar-alt"></i>&nbsp;{{ idea.date|date("d/m/Y") }}</span>
+                        </small>
+                    </p>
+                    <h5 class="card-title">
+                        <img class="cadeau" src="{{ asset('images/cadeau.png') }}" alt="">
+                        <a href="{{ path('idea_update', {'id' : idea.id}) }}">{{ idea.title }}</a>
+                    </h5>
+
+                    {% if idea.description %}
+                    <p class="card-text">{{ idea.description|nl2br }}</p>
+                    {% endif %}
+
+                    {% if idea.link %}
+                    <p><a target="_blank" href="{{ idea.link }}" title="Ouvrir dans un nouvel onglet" class="card-link external">{{ idea.link[:30] }} {% if idea.link|length > 30 %} [...]{% endif %}</a></p>
+                    {% endif %}
+
+                    <p class="card-text">
+
+                        {% if archived is not defined %}
+                        <a type="button" class="btn btn-info btn-sm" href="{{ path('idea_update', {'id': idea.id}) }}" title="Modifier">
+                            <i class="fas fa-pencil-alt"></i>&nbsp;Modifier
+                        </a>
+                        {% endif %}
+
+                        {% if idea.comments|length %}
+                        <a type="button" class="btn btn-info btn-sm" href="{{ path('idea_update', {'id' : idea.id}) }}">
+                            <i class="fas fa-comments"></i>&nbsp;
+                            {% if idea.comments|length == 0 %}Commenter{% elseif idea.comments|length == 1 %}Commentaire{% elseif idea.comments|length > 1 %}Commentaires{% endif %}
+                            &nbsp;<span class="badge badge-light">{{ idea.comments|length }}</span>
+                        </a>
+                        {% endif %}
+
+                        {% if idea.archived %}
+                            <a type="button" class="btn btn-info btn-sm" href="{{ path('idea_unarchive', {'id': idea.id}) }}" title="Désarchiver">
+                                <i class="fas fa-archive"></i>&nbsp;Désarchiver
+                            </a>
+                        {%  else %}
+                            <a type="button" class="btn btn-info btn-sm" href="{{ path('idea_archive', {'id': idea.id}) }}" title="Archiver">
+                                <i class="fas fa-archive"></i>&nbsp;Archiver
+                            </a>
+                        {% endif %}
+                        <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteIdea{{ idea.id }}" title="Supprimer"><i class="fas fa-trash-alt"></i></button>
+                        <!-- Modal -->
+                        {{  include('inc/modal.html.twig', {'id_modal' : 'deleteIdea' ~ idea.id,'title' : 'Supprimer cette idée', 'route' : path('idea_delete', {'id': idea.id})}) }}
+                    </p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <button type="button" class="btn btn-link" data-toggle="modal" data-target="#deleteAllIdeas">Supprimer toutes mes idées</button>
+
+        <!-- Modal -->
+        {{  include('inc/modal.html.twig', {'id_modal' : 'deleteAllIdeas','title' : 'Supprimer toutes vos idées', 'route' : path('member_ideas_delete')}) }}
+        {% endif %}
+    </div>
+{% endblock %}

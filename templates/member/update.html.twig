@@ -1,0 +1,140 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} Mon compte{% endblock %}
+{% block h1 %}Mon compte{% endblock %}
+
+{% block body %}
+
+{% if app.request.get('panel') is not defined %}
+    {% set panel = 'notdefined' %}
+{% else %}
+    {% set panel = app.request.get('panel') %}
+{% endif %}
+
+<div>
+
+    {# Mes informations #}
+    <div class="card">
+        <div class="card-header">Mes informations</div>
+        <div class="card-body">
+
+            {% for message in app.flashes('successInfosUpdate') %}
+                <div class="alert alert-success">{{ message }}</div>
+            {% endfor %}
+            {{ form_start(formInfos) }}
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    {{ form_label(formInfos.firstname) }}
+                    {{ form_errors(formInfos.firstname) }}
+                    {{ form_widget(formInfos.firstname, {'attr' : {'class' : 'form-control', 'placeholder' : 'Prénom'}}) }}
+                </div>
+
+                <div class="form-group col-md-6">
+                    {{ form_label(formInfos.lastname) }}
+                    {{ form_errors(formInfos.lastname) }}
+                    {{ form_widget(formInfos.lastname, {'attr' : {'class' : 'form-control', 'placeholder' : 'Nom'}}) }}
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    {{ form_label(formInfos.email) }}
+                    {{ form_errors(formInfos.email) }}
+                    {{ form_widget(formInfos.email, {'attr' : {'class' : 'form-control', 'placeholder' : 'Prénom'}}) }}
+                </div>
+
+                <div class="form-group col-md-6">
+                    {{ form_label(formInfos.birthdate) }}
+                    {{ form_errors(formInfos.birthdate) }}
+                    {{ form_widget(formInfos.birthdate, {'attr' : {'class' : 'form-control'}}) }}
+                </div>
+            </div>
+
+            <div class="text-right">
+            {{ form_widget(formInfos.save, {'attr' : {'class' : 'btn btn-primary'}}) }}
+            </div>
+
+            {{ form_end(formInfos) }}
+        </div>
+    </div>
+
+
+    {# todo: décommenter les notifications #}
+    {# Mes notifications
+    <br>
+    <div class="card">
+        <div class="card-header">Mes notifications</div>
+        <div class="card-body">
+
+            {% for message in app.flashes('successNotifsUpdate') %}
+                <div class="alert alert-success">{{ message }}</div>
+            {% endfor %}
+            {{ form_start(formNotifications) }}
+            <div class="form-group form-check">
+                {{ form_errors(formNotifications.receive_email_new_comment) }}
+                {{ form_widget(formNotifications.receive_email_new_comment, {'attr' : {'class' : 'form-check-input'}}) }}
+                {{ form_label(formNotifications.receive_email_new_comment) }}
+            </div>
+
+            <div class="text-right">
+            {{ form_widget(formNotifications.save, {'attr' : {'class' : 'btn btn-primary'}}) }}
+            </div>
+
+            {{ form_end(formNotifications) }}
+        </div>
+    </div>
+    #}
+
+    <br>
+    {# Mon mot de passe #}
+    <div class="card">
+        <div class="card-header">Mon mot de passe</div>
+        <div class="card-body">
+
+            {% for message in app.flashes('successPwdUpdate') %}
+                <div class="alert alert-success">{{ message }}</div>
+            {% endfor %}
+            {% for message in app.flashes('dangerPwdUpdate') %}
+                <div class="alert alert-danger">{{ message }}</div>
+            {% endfor %}
+            {{ form_start(formPwd) }}
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    {{ form_label(formPwd.password.first) }}
+                    {{ form_errors(formPwd.password.first) }}
+                    {{ form_widget(formPwd.password.first, {'attr' : {'class' : 'form-control'}}) }}
+                </div>
+
+                    <div class="form-group col-md-6">
+                    {{ form_label(formPwd.password.second) }}
+                    {{ form_errors(formPwd.password.second) }}
+                    {{ form_widget(formPwd.password.second, {'attr' : {'class' : 'form-control'}}) }}
+                </div>
+            </div>
+
+            <div class="text-right">
+                {{ form_widget(formPwd.save, {'attr' : {'class' : 'btn btn-primary'}}) }}
+                <a class="backlink" href="#" onclick="window.history.back();">Retour</a>
+            </div>
+
+            {{ form_end(formPwd) }}
+        </div>
+    </div>
+
+    <br>
+    {# Mes données #}
+    <div class="card">
+        <div class="card-header">Mes données</div>
+        <div class="card-body">
+
+            {% if member.ideas|length %}
+                <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#deleteAllIdeas">Supprimer mes idées</button>
+                {{  include('inc/modal.html.twig', {'id_modal' : 'deleteAllIdeas','title' : 'Supprimer toutes vos idées', 'route' : path('member_ideas_delete')}) }}
+            {% endif %}
+            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteUser">Supprimer mon compte</button>
+            {{ include('inc/modal.html.twig', {'id_modal' : 'deleteUser','title' : 'Supprimer votre compte', 'route' : path('member_delete') }) }}
+        </div>
+    </div>
+
+</div>
+{% endblock %}
